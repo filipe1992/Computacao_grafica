@@ -65,7 +65,7 @@ def bresenham(ponto1,ponto2):
     pontos.append([x,y])
     return pontos
 
-pontos = [[-2,2],[2,2],[4,0],[2,-2],[-2,-2],[-4,-1]]
+pontos = [[-2,2],[2,2],[4,0],[2,-2],[-2,-2],[-4,-1]] 
 
 def desenhar(pontos = []):
     
