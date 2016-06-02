@@ -97,5 +97,12 @@ def desenhar(pontos = []):
         retas.append(pf)
     return retas
 if __name__ == '__main__':
-    for i,v in enumerate(desenhar(pontos)):
-        print("Reta[",i,"]: ",v)
+	
+	mat = [[0 for _ in range(50)] for _ in range(50)]
+	
+	for i in desenhar(pontos):
+		for j in i:
+			mat[j[0]+24][j[1]+24] = 1
+	
+	for i in mat:
+		print(i.__str__().replace(" 0,","#").replace(" 0]","#").replace("[0,","#").replace(" 1,","_"))
