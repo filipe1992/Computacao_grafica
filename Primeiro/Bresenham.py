@@ -32,19 +32,19 @@ def posicao(ponto1,ponto2):
     
     m = (ponto2[1] - ponto1[1])/(ponto2[0] - ponto1[0])
     
-    if ponto1[0] < ponto2[0] and 0 <= m <= 1:# X1 < X2
+    if ponto1[0] < ponto2[0] and 0 <= m <= 1:
         return 1
     elif ponto1[0] < ponto2[0] and 0 > m >= -1:
         return 8
-    elif ponto1[0] > ponto2[0] and 0 >= m >= -1:# X1 > X2
+    elif ponto1[0] > ponto2[0] and 0 >= m >= -1:
         return 4
-    elif ponto1[0] > ponto2[0] and 0 < m <= 1: #-->5
+    elif ponto1[0] > ponto2[0] and 0 < m <= 1: 
         return 5
-    elif ponto1[1] < ponto2[1] and m < -1:# Y1 < Y2
+    elif ponto1[1] < ponto2[1] and m < -1:
         return 3
     elif ponto1[1] < ponto2[1] and m > 1:
         return 2
-    elif ponto1[1] > ponto2[1] and m < -1:# Y1 > Y2
+    elif ponto1[1] > ponto2[1] and m < -1:
         return 7
     elif ponto1[1] > ponto2[1] and m > 1:
         return 6
@@ -55,7 +55,7 @@ def bresenham(ponto1,ponto2):
     m = (ponto2[1]-ponto1[1])/(ponto2[0]-ponto1[0])
     e = m - 0.5
     pontos = []
-    for i in range(ponto2[0]):
+    for _ in range(ponto2[0]):
         pontos.append([x,y])
         while e >= 0:
             y += 1
@@ -65,7 +65,7 @@ def bresenham(ponto1,ponto2):
     pontos.append([x,y])
     return pontos
 
-pontos = [[-2,2],[2,2],[4,0],[2,-2],[-2,-2],[-4,-1]] 
+pontos = [[-4,3],[0,5],[3,3],[5,0],[0,-3],[-5,-1]] 
 
 def desenhar(pontos = []):
     
@@ -75,25 +75,27 @@ def desenhar(pontos = []):
     
     for i in range(len(pontos)-1):
         p1,p2 = pontos[i],pontos[i+1]
-        print(p1,p2)
+        print("pontos: << P1: ",p1," P2: ",p2,">>")
         
         val,p1,p2 = colocar_origem(p1, p2)
-        print(val,p1,p2)
+        print("ponto de subtracao: ",val,"novos pontos: P1: ",p1," P2: ",p2)
         
         pos = posicao(p1, p2)
-        print(pos)
+        print("Posicao no octeto: ",pos)
         p1 = transformar(p1, pos)
         p2 = transformar(p2, pos)
         if p2[0] < 0 > p2[1]:
             p2[0],p2[1] = p2[0]*-1,p2[1]*-1
-        print(p1,p2)
+        print("Pontos transformados: P1: ",p1," P2: ",p2)
         ptos = bresenham(p1, p2)
-        print(ptos)
+        print("Reta: ",ptos)
         pf = []
         for i in ptos:
             pf.append(voltar_posicao(transformar(i, pos), val))
-        print("##"*10)
+        print("Reta na posicao de Origem: ",pf)
+        print("+=+=+="*10)
         retas.append(pf)
     return retas
-
-print(desenhar(pontos))
+if __name__ == '__main__':
+    for i,v in enumerate(desenhar(pontos)):
+        print("Reta[",i,"]: ",v)
