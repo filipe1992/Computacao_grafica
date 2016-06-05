@@ -4,6 +4,8 @@ Created on 31 de mai de 2016
 @author: Filipe Damasceno
 '''
 
+from Primeiro.Inteface import *
+
 def colocar_origem(ponto1,ponto2):
     return ponto1, [0,0],[ponto2[0]-ponto1[0],ponto2[1]-ponto1[1]]
 
@@ -30,7 +32,10 @@ def transformar(ponto,posicao):
 
 def posicao(ponto1,ponto2):
     
-    m = (ponto2[1] - ponto1[1])/(ponto2[0] - ponto1[0])
+    if (ponto2[0] - ponto1[0]) != 0:
+        m = (ponto2[1] - ponto1[1])/(ponto2[0] - ponto1[0])
+    else:
+        m = 0
     
     if ponto1[0] < ponto2[0] and 0 <= m <= 1:
         return 1
@@ -52,7 +57,15 @@ def posicao(ponto1,ponto2):
 def bresenham(ponto1,ponto2):
     x = ponto1[0]
     y = ponto1[1]
-    m = (ponto2[1]-ponto1[1])/(ponto2[0]-ponto1[0])
+    if y == ponto2[1]:
+        return [[i,y] for i in range(ponto2[0])] if ponto2[0] > 0 else [[i,y] for i in range(0,ponto2[0],-1)] 
+    if x == ponto2[0]:
+        return [[x,i] for i in range(ponto2[1])] if ponto2[1] > 0 else [[x,i] for i in range(0,ponto2[1],-1)] 
+    
+    if (ponto2[0] - ponto1[0]) != 0:
+        m = (ponto2[1] - ponto1[1])/(ponto2[0] - ponto1[0])
+    else:
+        m = 0
     e = m - 0.5
     pontos = []
     for _ in range(ponto2[0]):
@@ -64,8 +77,6 @@ def bresenham(ponto1,ponto2):
         e += m
     pontos.append([x,y])
     return pontos
-
-pontos = [[-4,3],[0,5],[3,3],[5,0],[0,-3],[-5,-1]] 
 
 def desenhar(pontos = []):
     
@@ -94,15 +105,29 @@ def desenhar(pontos = []):
             pf.append(voltar_posicao(transformar(i, pos), val))
         print("Reta na posicao de Origem: ",pf)
         print("+=+=+="*10)
-        retas.append(pf)
+        retas += pf
     return retas
+
+
+def ajustar (pontos,janelaT = 50):
+    novosP =[]
+    for i in pontos:
+        novosP.append([i[0]+(Tjanela//2),i[1]+(Tjanela//2)])
+    return novosP
+
+
 if __name__ == '__main__':
-	
-	mat = [[0 for _ in range(50)] for _ in range(50)]
-	
-	for i in desenhar(pontos):
-		for j in i:
-			mat[j[0]+24][j[1]+24] = 1
-	
-	for i in mat:
-		print(i.__str__().replace(" 0,","#").replace(" 0]","#").replace("[0,","#").replace(" 1,","_"))
+    Tjanela = 50
+    pontos = [[10,10],[10,-10],[-10,-10],[-10,10],[10,10],[10,-10]]#[[-4,3],[0,5],[3,3],[5,0],[0,-3],[-5,-1]] 
+    outrosPontos = [[10,10],[-10,-10],[-10,10],[10,-10]]
+    
+    pontos = ajustar(pontos,Tjanela)+ajustar(outrosPontos, Tjanela)
+    
+    app = QtGui.QApplication(sys.argv)
+    janela = Interface(pontos=desenhar(pontos))
+    sys.exit(app.exec_())
+    
+   
+        
+    
+    
