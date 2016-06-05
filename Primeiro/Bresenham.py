@@ -119,8 +119,8 @@ def ajustar (pontos,janelaT = 50):
 
 if __name__ == '__main__':
     Tjanela = 50
-    pontos = [[10,10],[10,-10],[-10,-10],[-10,10],[10,10],[10,-10]]#[[-4,3],[0,5],[3,3],[5,0],[0,-3],[-5,-1]] 
-    outrosPontos = [[10,10],[-10,-10],[-10,10],[10,-10]]
+    pontos = [[0,10],[10,0],[0,-10],[-10,0]]#[[-4,3],[0,5],[3,3],[5,0],[0,-3],[-5,-1]] 
+    outrosPontos = [[0,10],[0,-10],[-10,0],[10,0]]
     
     pontos = ajustar(pontos,Tjanela)+ajustar(outrosPontos, Tjanela)
     
