@@ -4,7 +4,8 @@ Created on 31 de mai de 2016
 @author: Filipe Damasceno
 '''
 
-from Primeiro.Inteface import *
+from Primeiro.Inteface import QtGui,sys,Interface
+
 
 def colocar_origem(ponto1,ponto2):
     return ponto1, [0,0],[ponto2[0]-ponto1[0],ponto2[1]-ponto1[1]]
