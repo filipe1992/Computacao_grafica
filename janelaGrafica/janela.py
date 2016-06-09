@@ -69,6 +69,12 @@ class Janela(QtGui.QWidget):
                 pontos[cont] = [int(pontos[cont][0]),int(pontos[cont][1])]
                 cont+=1
             print(pontos)
+        
+    def calcCirculo(self,pontos):
+        vali,init,fim = self.colocar_origem(pontos[0], pontos[1])
+        
+        
+        
     
     def paintEvent(self, e):
         
