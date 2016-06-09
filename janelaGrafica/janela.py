@@ -19,6 +19,7 @@ class Janela(QtGui.QWidget):
         self.centro = dict({'x':(largura//20)-1,'y':(altura//20)-1})
         self.cores = [ [ QtCore.Qt.white for _ in range(5,((self.altura//10))+5)]  for _ in range((self.largura//10))]
         #self.a = None
+        self.corborda = QtCore.Qt.blue
         self.iniciarUI()
         
     
@@ -56,7 +57,7 @@ class Janela(QtGui.QWidget):
             
     
     def limpar(self):
-        self.limpart()
+        self.floodFill(0, 0, QtCore.Qt.black )
 
     def circulo(self):
         texto,ok = QtGui.QInputDialog.getText(self, "circulo", "entre com centro e o raio do circulo.\n Formato: c1,c2;r1,r2")
@@ -70,11 +71,26 @@ class Janela(QtGui.QWidget):
                 cont+=1
             print(pontos)
         
+        
     def calcCirculo(self,pontos):
         vali,init,fim = self.colocar_origem(pontos[0], pontos[1])
         
+    def floodFill(self,x ,y ,corAtual):
+        y1=(y+self.centro['y'])-y
+        x1=x+self.centro['x']
+        print(x1,y1,x,y)
+        atual = self.cores[x][y]
         
-        
+        if corAtual != atual and atual != self.corborda:
+            self.desenharPonto(x, y, corAtual)
+            
+            self.floodFill(x, y+1, corAtual)
+            print(" ok ")
+            self.floodFill(x, y-1, corAtual)
+            self.floodFill(x+1, y, corAtual)
+            self.floodFill(x-1, y, corAtual)
+        else:
+            pass
     
     def paintEvent(self, e):
         
@@ -85,8 +101,7 @@ class Janela(QtGui.QWidget):
     
     def Principal(self):
         self.desenharTela()
-        
-        
+                                             
         
         
     def desenharTela(self):
@@ -97,6 +112,16 @@ class Janela(QtGui.QWidget):
             for j in range(5,((self.altura//10)-1)+5):
                 self.a.setBrush(QtGui.QColor(self.cores[i][j-5]))
                 self.a.drawRect(i*10, j*10, 10, 10)
+        
+        for i in range((self.altura//10)):
+            if 0 == i or i == (self.altura//10)-2:
+                for j in range((self.largura//10)):
+                    self.cores[i][j] = QtCore.Qt.blue
+            else:
+                self.cores[i][0] = QtCore.Qt.blue
+                self.cores[i][-2] = QtCore.Qt.blue
+        self.update()
+        
     
     def limpart(self):
         for i in range(len(self.cores)):
@@ -106,12 +131,12 @@ class Janela(QtGui.QWidget):
         self.update()
                 
         
-    def desenharPonto(self,x,y):
+    def desenharPonto(self,x,y,cor = QtCore.Qt.black):
         y=-y+self.centro['y']
         x+=self.centro['x']
         '''self.a.setBrush(QtGui.QColor(QtCore.Qt.white))
         self.a.drawRect(x*10,y*10+50,10,10)'''
-        self.cores[x][y] = QtCore.Qt.black
+        self.cores[x][y] = cor
         self.update()
     
     ''' funcoes para o trabalho'''
