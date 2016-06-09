@@ -27,35 +27,59 @@ class Janela(QtGui.QWidget):
         self.quadrilatero = QtGui.QPushButton("Quadrilatero",self)
         self.quadrilatero.move(0,0)
         
-        self.connect(self.quadrilatero,QtCore.SIGNAL("clicked()"),self.butao)
+        self.connect(self.quadrilatero,QtCore.SIGNAL("clicked()"),self.inputPontos)
         
-        triangulo = QtGui.QPushButton("Triangulo",self)
-        triangulo.move(80,0)
+        self.limpa = QtGui.QPushButton("limpar",self)
+        self.limpa.move(100,0)
+        self.connect(self.limpa,QtCore.SIGNAL("clicked()"),self.limpar)
         
-        reta = QtGui.QPushButton("Reta",self)
-        reta.move(160,0)
+        reta = QtGui.QPushButton("circulo",self)
+        reta.move(200,0)
         
         self.setGeometry(300, 150, self.altura-10, self.largura+40)
         self.setWindowTitle("teste-bresham")
         self.show()
     
-    def butao(self):
-        self.desenharPonto(10, -2)
-        self.update()
+    def inputPontos(self):
+        texto,ok = QtGui.QInputDialog.getText(self, "Retas", "entre com os pontos.\n Formato: x1,y1;x2,y2")
+        if ok:
+            lpontos = texto.split(sep=";")
+            pontos = []
+            cont = 0
+            for i in lpontos:
+                pontos.append(i.split(sep=","))
+                pontos[cont] = [int(pontos[cont][0]),int(pontos[cont][1])]
+                cont+=1
+            print(pontos)
+            for x in self.desenhar(pontos):
+                self.desenharPonto(x[0], x[1])
+            
+    
+    def limpar(self):
+        self.limpart()
 
+    def circulo(self):
+        texto,ok = QtGui.QInputDialog.getText(self, "circulo", "entre com centro e o raio do circulo.\n Formato: c1,c2;r1,r2")
+        if ok:
+            lpontos = texto.split(sep=";")
+            pontos = []
+            cont = 0
+            for i in lpontos:
+                pontos.append(i.split(sep=","))
+                pontos[cont] = [int(pontos[cont][0]),int(pontos[cont][1])]
+                cont+=1
+            print(pontos)
     
     def paintEvent(self, e):
         
         self.a = QtGui.QPainter(self)
         #self.a.begin(self)
         self.Principal()
-        #self.a.end()
+        self.a.end()
     
     def Principal(self):
         self.desenharTela()
         
-        for x in self.desenhar([[10,10],[-10,-10]]):
-            self.desenharPonto(x[0], x[1])
         
         
         
@@ -65,8 +89,15 @@ class Janela(QtGui.QWidget):
         
         for i in range((self.largura//10)-1):
             for j in range(5,((self.altura//10)-1)+5):
-                self.a.setBrush(QtGui.QColor(self.cores[i][j]))
+                self.a.setBrush(QtGui.QColor(self.cores[i][j-5]))
                 self.a.drawRect(i*10, j*10, 10, 10)
+    
+    def limpart(self):
+        for i in range(len(self.cores)):
+            for j in range(len(self.cores[1])):
+                if self.cores[i][j] != QtCore.Qt.white:
+                    self.cores[i][j] = QtCore.Qt.white
+        self.update()
                 
         
     def desenharPonto(self,x,y):
@@ -74,7 +105,7 @@ class Janela(QtGui.QWidget):
         x+=self.centro['x']
         '''self.a.setBrush(QtGui.QColor(QtCore.Qt.white))
         self.a.drawRect(x*10,y*10+50,10,10)'''
-        self.corees[x][y] = QtCore.Qt.black
+        self.cores[x][y] = QtCore.Qt.black
         self.update()
     
     ''' funcoes para o trabalho'''
