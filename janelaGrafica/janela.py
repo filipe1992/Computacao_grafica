@@ -17,16 +17,17 @@ class Janela(QtGui.QWidget):
         self.altura = altura
         self.largura = largura
         self.centro = dict({'x':(largura//20)-1,'y':(altura//20)-1})
-        self.a = QtGui.QPainter()
+        self.cores = [ [ QtCore.Qt.white for _ in range(5,((self.altura//10))+5)]  for _ in range((self.largura//10))]
+        #self.a = None
         self.iniciarUI()
         
     
     def iniciarUI(self):
         
-        quadrilatero = QtGui.QPushButton("Quadrilatero",self)
-        quadrilatero.move(0,0)
+        self.quadrilatero = QtGui.QPushButton("Quadrilatero",self)
+        self.quadrilatero.move(0,0)
         
-        quadrilatero.clicked.connect(self.butao)
+        self.connect(self.quadrilatero,QtCore.SIGNAL("clicked()"),self.butao)
         
         triangulo = QtGui.QPushButton("Triangulo",self)
         triangulo.move(80,0)
@@ -39,14 +40,16 @@ class Janela(QtGui.QWidget):
         self.show()
     
     def butao(self):
-        self.desenharTela()
+        self.desenharPonto(10, -2)
+        self.update()
+
     
     def paintEvent(self, e):
         
-        self.a = QtGui.QPainter()
-        self.a.begin(self)
+        self.a = QtGui.QPainter(self)
+        #self.a.begin(self)
         self.Principal()
-        self.a.end()
+        #self.a.end()
     
     def Principal(self):
         self.desenharTela()
@@ -62,15 +65,17 @@ class Janela(QtGui.QWidget):
         
         for i in range((self.largura//10)-1):
             for j in range(5,((self.altura//10)-1)+5):
-                self.a.setBrush(QtGui.QColor(QtCore.Qt.black))
+                self.a.setBrush(QtGui.QColor(self.cores[i][j]))
                 self.a.drawRect(i*10, j*10, 10, 10)
                 
         
     def desenharPonto(self,x,y):
         y=-y+self.centro['y']
         x+=self.centro['x']
-        self.a.setBrush(QtGui.QColor(QtCore.Qt.white))
-        self.a.drawRect(x*10,y*10+50,10,10)
+        '''self.a.setBrush(QtGui.QColor(QtCore.Qt.white))
+        self.a.drawRect(x*10,y*10+50,10,10)'''
+        self.corees[x][y] = QtCore.Qt.black
+        self.update()
     
     ''' funcoes para o trabalho'''
     
