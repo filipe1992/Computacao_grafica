@@ -5,8 +5,49 @@ Created on 8 de jun de 2016
 '''
 
 import sys
+from threading import currentThread
 
 from PyQt4 import QtCore, QtGui
+
+
+class TailRecursiveCall(Exception):
+    pass
+
+def tailrecursive(f):
+    class Rec_f(object):
+        def __init__(self):
+            self.tr_d = {}
+    
+        def __call__(self, *args, **kw):
+            self.args = args
+            self.kw = kw
+            thread = currentThread()
+            if thread not in self.tr_d:
+                self.tr_d[thread] = {}
+                self.tr_d[thread]["depth"] = 0
+                
+            self.tr_d[thread]["depth"] += 1
+            self.tr_d[thread]["args"] = args
+            self.tr_d[thread]["kw"] = kw
+            depth =  self.tr_d[thread]["depth"]
+            if depth > 1:
+                raise TailRecursiveCall
+            over = False
+            while not over:
+                over = True
+                args = self.tr_d[thread]["args"]
+                kw = self.tr_d[thread]["kw"]
+                #print "meta depth: %d" % depth
+                try:
+                    result = f (*args, **kw)
+                except TailRecursiveCall:
+                    self.tr_d[thread]["depth"] -= 1
+                    over = False
+            self.tr_d[thread]["depth"] -= 1
+            return result
+    
+    return Rec_f()
+
 
 
 class Janela(QtGui.QWidget):
@@ -42,7 +83,7 @@ class Janela(QtGui.QWidget):
         self.show()
     
     def inputPontos(self):
-        texto,ok = QtGui.QInputDialog.getText(self, "Retas", "entre com os pontos.\n Formato: x1,y1;x2,y2")
+        texto,ok = QtGui.QInputDialog.getText(self, "Retas", "Entre com os pontos.\nFormato: x1,y1;x2,y2\nMax:24")
         if ok:
             lpontos = texto.split(sep=";")
             pontos = []
@@ -51,13 +92,12 @@ class Janela(QtGui.QWidget):
                 pontos.append(i.split(sep=","))
                 pontos[cont] = [int(pontos[cont][0]),int(pontos[cont][1])]
                 cont+=1
-            print(pontos)
             for x in self.desenhar(pontos):
                 self.desenharPonto(x[0], x[1])
             
     
     def limpar(self):
-        self.floodFill(0, 0, QtCore.Qt.black )
+        self.floodFill(x=0, y=0, corAtual=QtCore.Qt.black )
 
     def circulo(self):
         texto,ok = QtGui.QInputDialog.getText(self, "circulo", "entre com centro e o raio do circulo.\n Formato: c1,c2;r1,r2")
@@ -74,23 +114,22 @@ class Janela(QtGui.QWidget):
         
     def calcCirculo(self,pontos):
         vali,init,fim = self.colocar_origem(pontos[0], pontos[1])
-        
+    
+    #@tailrecursive
     def floodFill(self,x ,y ,corAtual):
-        y1=(y+self.centro['y'])-y
+        y1=self.centro['y']-y
         x1=x+self.centro['x']
         print(x1,y1,x,y)
-        atual = self.cores[x][y]
+        atual = self.cores[x1][y1]
         
         if corAtual != atual and atual != self.corborda:
             self.desenharPonto(x, y, corAtual)
             
-            self.floodFill(x, y+1, corAtual)
-            print(" ok ")
-            self.floodFill(x, y-1, corAtual)
             self.floodFill(x+1, y, corAtual)
             self.floodFill(x-1, y, corAtual)
-        else:
-            pass
+            self.floodFill(x, y+1, corAtual)
+            self.floodFill(x, y-1, corAtual)
+
     
     def paintEvent(self, e):
         
@@ -132,7 +171,7 @@ class Janela(QtGui.QWidget):
                 
         
     def desenharPonto(self,x,y,cor = QtCore.Qt.black):
-        y=-y+self.centro['y']
+        y=-y+self.centro['y'] 
         x+=self.centro['x']
         '''self.a.setBrush(QtGui.QColor(QtCore.Qt.white))
         self.a.drawRect(x*10,y*10+50,10,10)'''
